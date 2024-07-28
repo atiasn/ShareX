@@ -821,7 +821,7 @@ namespace ShareX.ScreenCaptureLib
 
             if (ShapeManager.IsCurrentShapeValid)
             {
-                clipboardText = GetAreaText(ShapeManager.CurrentRectangle);
+                clipboardText = Mode == RegionCaptureMode.Ruler ? FairyRulerCopy(ShapeManager.CurrentRectangle) : GetAreaText(ShapeManager.CurrentRectangle);
             }
             else
             {
@@ -1223,6 +1223,25 @@ namespace ShareX.ScreenCaptureLib
                 string text = $"X: {rect.X} | Y: {rect.Y} | Right: {endLocation.X} | Bottom: {endLocation.Y}\r\n" +
                     $"Width: {rect.Width} px | Height: {rect.Height} px | Area: {rect.Area()} px | Perimeter: {rect.Perimeter()} px\r\n" +
                     $"Distance: {MathHelpers.Distance(rect.Location, endLocation):0.00} px | Angle: {MathHelpers.LookAtDegree(rect.Location, endLocation):0.00}°";
+                return text;
+            }
+
+            return string.Format(Resources.RectangleRegion_GetAreaText_Area, rect.X, rect.Y, rect.Width, rect.Height);
+        }
+
+        internal string FairyRulerCopy(RectangleF rect)
+        {
+            if (IsEditorMode)
+            {
+                rect = new RectangleF(rect.X - CanvasRectangle.X, rect.Y - CanvasRectangle.Y, rect.Width, rect.Height);
+            }
+            else if (Mode == RegionCaptureMode.Ruler)
+            {
+                // PointF endLocation = new PointF(rect.Right - 1, rect.Bottom - 1);
+                // string text = $"X: {rect.X} | Y: {rect.Y} | Right: {endLocation.X} | Bottom: {endLocation.Y}\r\n" +
+                //    $"Width: {rect.Width} px | Height: {rect.Height} px | Area: {rect.Area()} px | Perimeter: {rect.Perimeter()} px\r\n" +
+                //    $"Distance: {MathHelpers.Distance(rect.Location, endLocation):0.00} px | Angle: {MathHelpers.LookAtDegree(rect.Location, endLocation):0.00}°";
+                string text = $"({rect.X}, {rect.Y}, {rect.Width}, {rect.Height})";
                 return text;
             }
 
